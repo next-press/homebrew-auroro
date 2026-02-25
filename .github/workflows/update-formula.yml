@@ -1,0 +1,68 @@
+name: Update Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to update to (without v prefix)"
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update formula
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          BASE_URL="https://github.com/next-press/auroro/releases/download/checkmate-v${VERSION}"
+
+          SHA_DARWIN_ARM64=$(curl -sL "${BASE_URL}/checkmate-${VERSION}-darwin-arm64.tar.gz" | shasum -a 256 | awk '{print $1}')
+          SHA_DARWIN_AMD64=$(curl -sL "${BASE_URL}/checkmate-${VERSION}-darwin-amd64.tar.gz" | shasum -a 256 | awk '{print $1}')
+          SHA_LINUX_AMD64=$(curl -sL "${BASE_URL}/checkmate-${VERSION}-linux-amd64.tar.gz" | shasum -a 256 | awk '{print $1}')
+
+          cat > Formula/checkmate.rb << FORMULA
+          class Checkmate < Formula
+            desc "Task management TUI"
+            homepage "https://github.com/next-press/auroro"
+            version "${VERSION}"
+            license "MIT"
+
+            if OS.mac? && Hardware::CPU.arm?
+              url "${BASE_URL}/checkmate-${VERSION}-darwin-arm64.tar.gz"
+              sha256 "${SHA_DARWIN_ARM64}"
+            end
+
+            if OS.mac? && Hardware::CPU.intel?
+              url "${BASE_URL}/checkmate-${VERSION}-darwin-amd64.tar.gz"
+              sha256 "${SHA_DARWIN_AMD64}"
+            end
+
+            if OS.linux? && Hardware::CPU.intel?
+              url "${BASE_URL}/checkmate-${VERSION}-linux-amd64.tar.gz"
+              sha256 "${SHA_LINUX_AMD64}"
+            end
+
+            def install
+              libexec.install "checkmate"
+              libexec.install "lib"
+              chmod 0755, libexec/"checkmate"
+              bin.install_symlink libexec/"checkmate"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/checkmate --version")
+            end
+          end
+          FORMULA
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/checkmate.rb
+          git commit -m "checkmate ${VERSION}"
+          git push
