@@ -1,3 +1,5 @@
+require_relative "../lib/private_strategy"
+
 class Checkmate < Formula
   desc "Task management TUI"
   homepage "https://github.com/next-press/auroro"
