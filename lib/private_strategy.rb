@@ -46,7 +46,7 @@ class GitHubPrivateRepositoryDownloadStrategy < CurlDownloadStrategy
 
   def validate_github_repository_access!
     GitHub.repository(@owner, @repo)
-  rescue GitHub::HTTPNotFoundError
+  rescue GitHub::API::HTTPNotFoundError
     message = <<~EOS
       HOMEBREW_GITHUB_API_TOKEN can not access the repository: #{@owner}/#{@repo}
       This token may not have permission to access the repository or the url may be incorrect.
@@ -89,7 +89,6 @@ class GitHubPrivateRepositoryReleaseDownloadStrategy < GitHubPrivateRepositoryDo
   end
 
   def fetch_release_metadata
-    release_url = "https://api.github.com/repos/#{@owner}/#{@repo}/releases/tags/#{@tag}"
-    GitHub.open_api(release_url)
+    GitHub.get_release(@owner, @repo, @tag)
   end
 end
