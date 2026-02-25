@@ -4,20 +4,10 @@ class Checkmate < Formula
   version "0.1.0"
   license "MIT"
 
-  if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.0/checkmate-0.1.0-darwin-arm64.tar.gz"
-    sha256 "PLACEHOLDER"
-  end
+  depends_on arch: :arm64
 
-  if OS.mac? && Hardware::CPU.intel?
-    url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.0/checkmate-0.1.0-darwin-amd64.tar.gz"
-    sha256 "PLACEHOLDER"
-  end
-
-  if OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.0/checkmate-0.1.0-linux-amd64.tar.gz"
-    sha256 "PLACEHOLDER"
-  end
+  url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.0/checkmate-0.1.0-darwin-arm64.tar.gz"
+  sha256 "6f3275c4d43c739089fa898c8f212edf3579fe01916b4bd7c5ad0172fac31118"
 
   def install
     libexec.install "checkmate"
