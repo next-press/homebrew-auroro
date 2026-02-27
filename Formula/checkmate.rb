@@ -3,14 +3,14 @@ require_relative "../lib/private_strategy"
 class Checkmate < Formula
   desc "Task management TUI"
   homepage "https://github.com/next-press/auroro"
-  version "0.1.0"
+  version "0.1.2"
   license "MIT"
 
   depends_on arch: :arm64
   preserve_rpath
 
-  url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.0/checkmate-0.1.0-darwin-arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
-  sha256 "b0c93ffdc0853092462df117805b04b8916e1ada73dcdcfee45fac5e27aef929"
+  url "https://github.com/next-press/auroro/releases/download/checkmate-v0.1.2/checkmate-0.1.2-darwin-arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
+  sha256 "fe010d4a04aa939439e99e85622e82334fa21bae89378e9b67eea912ad562864"
 
   def install
     libexec.install "checkmate"
